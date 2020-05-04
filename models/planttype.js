@@ -11,7 +11,7 @@ const PlantTypeSchema = new Schema(
 PlantTypeSchema
     .virtual('url')
     .get(function() {
-        return '/catalog/planttype/' + this._id;
+        return '/catalog/type/' + this._id;
     });
 
 module.exports = mongoose.model('PlantType', PlantTypeSchema);
