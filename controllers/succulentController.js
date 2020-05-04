@@ -1,14 +1,26 @@
 const Succulent = require('../models/succulent');
+const SucculentInstance = require('../models/succulentinstance');
+const PlantType = require('../models/planttype');
+const Category = require('../models/category');
 
 const async = require('async');
 
 exports.index = (req, res) => {
-    // res.send('NOT IMPLEMENTED');
 
     async.parallel({
         succulent_count: (callback) => {
             Succulent.countDocuments({}, callback);
+        },
+        succulent_instance_count: (callback) => {
+            SucculentInstance.countDocuments({}, callback);
+        },
+        planttype_count: (callback) => {
+            PlantType.countDocuments({}, callback);
+        },
+        category_count: (callback) => {
+            Category.countDocuments({}, callback);
         }
+
     }, (err, results) => {
         res.render('index', { title: 'Succulent Inventory Home', error: err, data: results });
     }
@@ -16,13 +28,27 @@ exports.index = (req, res) => {
 };
 
 // display list of all succulents
-exports.succulent_list = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulent_list = (req, res, next) => {
+
+    Succulent.find({}, 'name nickname')
+        .populate('category')
+        .populate('plantType')
+        .exec((err, list_succulents) => {
+            if (err) next(err);
+            res.render('succulent_list', { title: 'Succulent List', succulent_list: list_succulents });
+        })
 };
 
 // display detail page of specific succulent
-exports.succulent_detail = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulent_detail = (req, res, next) => {
+    
+    Succulent.findById(req.params.id)
+        .populate('category')
+        .populate('plantType')
+        .exec((err, detail_succulent) => {
+            if (err) next(err);
+            res.render('succulent_detail', { title: 'Succulent Detail', succulent: detail_succulent });
+        })
 };
 
 // display succulent create form on GET

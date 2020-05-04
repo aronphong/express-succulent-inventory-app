@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  p #[strong Name:] #{succulent.name}
+  p #[strong Also known as:] #{succulent.nickname}
+  p #[strong Plant Type:] 
+    each val, index in succulent.plantType
+        a(href=val.url) #{val.name}
+        if index < succulent.plantType.length - 1
+          |, 
