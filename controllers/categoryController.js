@@ -4,8 +4,13 @@ const Category = require('../models/category');
 const async = require('async');
 
 // display list of all categorys
-exports.category_list = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.category_list = (req, res, next) => {
+    
+    Category.find({})
+      .exec((err, list_category) => {
+          if (err) next(err);
+          res.render('category_list', { title: 'Category List', category_list: list_category });
+      })
 };
 
 // display detail page of specific category

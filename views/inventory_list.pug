@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each val in inventory_list
+      li
+        a(href=val.url) #{val.succulent.name} : #{val.status}    
+        | $#{val.price}
+    
+    else
+      li We are currently out of stock! Check back at a later date.

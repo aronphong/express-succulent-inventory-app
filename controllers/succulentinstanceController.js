@@ -4,8 +4,14 @@ const Succulent = require('../models/succulent');
 const async = require('async');
 
 // display list of all categorys
-exports.succulentinstance_list = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulentinstance_list = (req, res, next) => {
+
+    SucculentInstance.find()
+      .populate('succulent')
+      .exec((err, list_succulentinstances) => {
+          if (err) next(err);
+          res.render('inventory_list', { title: 'Current Inventory', inventory_list: list_succulentinstances });
+      })
 };
 
 // display detail page of specific category
