@@ -13,7 +13,7 @@ const SucculentInstanceSchema = new Schema(
 SucculentInstanceSchema
     .virtual('url')
     .get(function() {
-        return '/catalog/succulentstock' + this._id;
+        return '/catalog/inventory/' + this._id;
     });
 
 module.exports = mongoose.model('SucculentInstance', SucculentInstanceSchema);
