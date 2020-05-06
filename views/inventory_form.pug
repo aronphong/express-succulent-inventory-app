@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  h1= title
+
+  form(action="" method="POST")
+    div.form-group 
+      label(for="succulent-name") Succulent Name:
+      select#succulent-name.form-control(type="select" placeholder="Select Succulent" name="succulent-name" required)
+        - succulents.sort((a,b) => { let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0; });
+        for succulent in succulents
+          option(value=succulent._id) #{succulent.name}
+    div.form-group
+      label(for="status") Status:
+      select#status.form-control(type="select" placeholder="Set Status" name="status" required)
+        option(value="Available") Available
+        option(value="Reserved") Reserved
+        option(value="Out of Stock") Out of Stock
+    div.form-group
+      label(for="price") Price:
+      input#price.form-control(type="text" placeholder="Set Item Price" name="price" required)
+    button.btn-btn-primary(type="submit") Submit
+
+  if errors
+    ul
+     for error in errors
+       li!= error.msg

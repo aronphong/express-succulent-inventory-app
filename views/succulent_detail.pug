@@ -5,8 +5,11 @@ block content
 
   p #[strong Name:] #{succulent.name}
   p #[strong Also known as:] #{succulent.nickname}
+  p #[strong Description]#{succulent.summary}
   p #[strong Plant Type:] 
     each val, index in succulent.plantType
         a(href=val.url) #{val.name}
         if index < succulent.plantType.length - 1
           |, 
+  p #[strong Category:] 
+    a(href=succulent.category.url) #{succulent.category.name}

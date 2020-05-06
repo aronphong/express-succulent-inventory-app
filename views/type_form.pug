@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+
+  form(action="" method="POST")
+    div.form-group 
+      label(for="plant-type") New Plant Type:
+      input#plant-type.form-control(type="text", placeholder="New type Name" required)
+
+    button.btn.btn-primary(type="submit") Submit

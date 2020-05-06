@@ -15,13 +15,31 @@ exports.succulentinstance_list = (req, res, next) => {
 };
 
 // display detail page of specific category
-exports.succulentinstance_detail = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulentinstance_detail = (req, res, next) => {
+
+    SucculentInstance.findById(req.params.id)
+        .populate('succulent')
+        .exec((err, instance_detail) => {
+            if(err) next(err);
+            if (instance_detail===null) {
+                const err = new Error('Item not found');
+                err.status = 404;
+                return next(err);
+            }
+
+            res.render('inventory_item_detail', { title: 'Item Detail', item: instance_detail });
+        })
 };
 
 // display category create form on GET
-exports.succulentinstance_create_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulentinstance_create_get = (req, res, next) => {
+    
+    Succulent.find()
+        .exec((err, succulents) => {
+            if (err) next(err);
+            res.render('inventory_form', { title: 'Create new Inventory Item', succulents: succulents });
+        })
+
 };
 
 // handle succuelent create on POST

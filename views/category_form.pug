@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+
+  form(action="" method="POST")
+    div.form-group 
+      label(for="category") New Category:
+      input#category.form-control(type="text", placeholder="New Category Name" required)
+
+    button.btn.btn-primary(type="submit") Submit

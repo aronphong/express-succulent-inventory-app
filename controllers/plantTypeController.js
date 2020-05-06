@@ -23,7 +23,7 @@ exports.type_detail = (req, res, next) => {
 
 // display category create form on GET
 exports.type_create_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+    res.render('type_form', { title: 'Create new Plant Type' });
 };
 
 // handle succuelent create on POST

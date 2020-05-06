@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 ID: #{item._id}
+
+  h4= item.price
+  h4= item.status
+  p #[strong SKU:] #{item.succulent.sku}
+
+  br
+  p #[strong Name:] #{item.succulent.name}
+  p #[strong Also known as:] #{item.succulent.nickname}
+  p #[strong Description]#{item.succulent.summary}

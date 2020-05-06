@@ -52,8 +52,21 @@ exports.succulent_detail = (req, res, next) => {
 };
 
 // display succulent create form on GET
-exports.succulent_create_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulent_create_get = (req, res, next) => {
+    
+    // get all types and categories, so we can add to succulent
+    async.parallel({
+        types: (callback) => {
+            PlantType.find(callback)
+        },
+        categories: (callback) => {
+            Category.find(callback)
+        }
+    }, (err, results) => {
+        if (err) next(err)
+        res.render('succulent_form', { title: 'Create Succulent', types: results.types, categories: results.categories });
+    }
+    )
 };
 
 // handle succuelent create on POST

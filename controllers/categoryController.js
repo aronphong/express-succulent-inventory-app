@@ -14,13 +14,18 @@ exports.category_list = (req, res, next) => {
 };
 
 // display detail page of specific category
-exports.category_detail = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.category_detail = (req, res, next) => {
+    
+    Category.findById(req.params.id)
+        .exec((err, category_detail) => {
+            if (err) next(err);
+            res.render('category_detail', { title: 'Category Detail', detail: category_detail });
+        })
 };
 
 // display category create form on GET
 exports.category_create_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+    res.render('category_form', { title: 'New Category' });
 };
 
 // handle succuelent create on POST
