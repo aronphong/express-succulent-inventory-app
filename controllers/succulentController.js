@@ -4,6 +4,8 @@ const PlantType = require('../models/planttype');
 const Category = require('../models/category');
 
 const async = require('async');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 
 exports.index = (req, res) => {
 
@@ -70,9 +72,71 @@ exports.succulent_create_get = (req, res, next) => {
 };
 
 // handle succuelent create on POST
-exports.succulent_create_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.succulent_create_post = [
+
+    // convert plant type to array
+    (req, res, next) => {
+        if (!(req.body.planttype instanceof Array)) {
+            if (typeof req.body.planttype === 'undefined') {
+                req.body.planttype = [];
+            } else {
+                req.body.planttype = new Array(req.body.planttype);
+            };
+        };
+        next();
+    },
+
+    // validate fields
+    body('name', 'Name must not be empty').trim().isLength( {min: 1}),
+    body('summary', 'summary must not be empty').trim().isLength( {min: 1}),
+
+    // sanitize fields
+    sanitizeBody('*').escape(),
+    sanitizeBody('planttype.*').escape(),
+
+    // process request after validation and sanitization
+    (req, res, next) => {
+
+        // extract the validation errors from request
+        const errors = validationResult(req);
+
+        // create a new succulent object
+        const succulent = new Succulent(
+            {
+                name: req.body.name,
+                nickname: req.body.nickname,
+                summary: req.body.summary,
+                plantType: req.body.planttype,
+                category: req.body.category
+            }
+        );
+
+        if (!errors.isEmpty()) {
+            // there are errors. render form again with sanitized values/error messages
+
+            //  get all plant types and categories for form
+            async.parallel({
+                types: (callback) => {
+                    PlantType.find(callback);
+                },
+                category: (callback) => {
+                    Category.find(callback);
+                }
+            }, (err, results) => {
+                if (err) next(err);
+                res.render('succulent_form', { title: 'Create Succulent', errors: error, types: results.type, categories: results.category})
+            });
+        } else {
+            // data from form is valid
+            // save succulent
+            succulent.save((err) => {
+                if (err) next(err);
+                // successful - redirect to new succulent record
+                res.redirect(succulent.url);
+            })
+        }
+    }
+];
 
 // display succulent delete form on GET
 exports.succulent_delete_get = (req, res) => {
