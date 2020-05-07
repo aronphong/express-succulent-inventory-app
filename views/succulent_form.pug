@@ -5,11 +5,11 @@ block content
 
   form(action="" method="POST")
     div.form-group
-      label(for="title") Name:
-      input#title.form-control(type="text", placeholder="Name of Succulent" name="title" required=(succulent===undefined ? "" : succulent.name))
+      label(for="name") Name:
+      input#name.form-control(type="text", placeholder="Name of Succulent" name="name" required=(succulent===undefined ? "" : succulent.name))
     div.form-group
-      label(for="nick-name") Also Known as:
-      input#nick-name.form-control(type="text" placeholder="Nick Name (optional)" name="nick-name")
+      label(for="nickname") Also Known as:
+      input#nickname.form-control(type="text" placeholder="Nick Name (optional)" name="nickname")
     div.form-group 
       label(for="summary") Summary:
       textarea#summary.form-control(type="textarea", placeholder="Description of Succulent" name="summary" required)
@@ -18,7 +18,7 @@ block content
       div
         for plantType in types
           div(style='display: inline; padding-right: 10px;')
-            input.checkbox-input(type="checkbox" name="plant-type" id=plantType._id value=plantType._id checked=plantType.checked)
+            input.checkbox-input(type="checkbox" name="planttype" id=plantType._id value=plantType._id checked=plantType.checked)
             label(for=plantType._id) #{plantType.name}
     div.form-group
       label(for="category") Category:
