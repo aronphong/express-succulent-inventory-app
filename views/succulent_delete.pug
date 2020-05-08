@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  h1 #{title}: #{succulent.name}
+
+  p #[strong Name:] #{succulent.name}
+  p #[strong Also known as:] #{succulent.nickname}
+  p #[strong Description]#{succulent.summary}
+  p #[strong Plant Type:] 
+    each val, index in succulent.plantType
+        a(href=val.url) #{val.name}
+        if index < succulent.plantType.length - 1
+          |, 
+  p #[strong Category:] 
+    a(href=succulent.category.url) #{succulent.category.name}
+
+  hr
+
+  if succulent_instances.length
+    
+    p #[strong Delete the following inventory items before attempting to delete this Succulent]
+
+    div(style='margin-left: 20px; margin-top:20px')
+
+      h4 Inventory items
+        
+        each item in succulent_instances
+          hr
+          p #{item.succulent.name}
+          p #{item.status}
+          p #[string ID: ]
+            a(href=item.url) #{item._id}
+            
+  else 
+    p Do you really want to delete this succulent?
+    
+    form(action="" method="POST")
+      div.form-group  
+        input#id.form-control(type="hidden" name="id" required value=succulent._id)
+      button.btn.btn-primary(type="submit") Delete

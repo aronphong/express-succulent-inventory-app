@@ -139,13 +139,60 @@ exports.succulent_create_post = [
 ];
 
 // display succulent delete form on GET
-exports.succulent_delete_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulent_delete_get = (req, res, next) => {
+    
+    async.parallel({
+        succulent: (callback) => {
+            Succulent.findById(req.params.id)
+                .populate('plantType')
+                .populate('category')
+                .exec(callback);
+        },
+        succulentinstances: (callback) => {
+            SucculentInstance.find({ 'succulent': req.params.id })
+                .populate('succulent')
+                .exec(callback);
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.succulent === null) {
+            res.redirect('/catalog/succulents');
+        };
+        
+        //successful
+        res.render('succulent_delete', { title: 'Delete Succulent', succulent: results.succulent, succulent_instances: results.succulentinstances });
+    });
 };
 
 // handle succulent delete on POST
-exports.succulent_delete_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulent_delete_post = (req, res, next) => {
+    
+    // Assume the POST has valid id
+
+    async.parallel({
+        succulent: (callback) => {
+            Succulent.findById(req.body.id)
+                .exec(callback)
+        },
+        succulentinstances: (callback) => {
+            SucculentInstance.find({ 'succulent': req.body.id })
+                .populate('succulent')
+                .exec(callback)
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.succulentinstances.length > 0) {
+            // succulent has instances. Render in the same was as GET
+            res.render('succulent_delete', { title: 'Delete Succulent', succulent: results.succulent, succulent_instances: results.succulentinstances });
+        } 
+        else {
+            // Succulent has no instances. Delete object and redirect
+            Succulent.findByIdAndRemove(req.body.id, (err) => {
+                if (err) next(err);
+                res.redirect('/catalog/succulents');
+            });
+        }
+    });
 };
 
 // display succulent update form on GET
