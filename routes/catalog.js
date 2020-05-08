@@ -19,16 +19,16 @@ router.get('/succulent/create', succulent_controller.succulent_create_get);
 router.post('/succulent/create', succulent_controller.succulent_create_post);
 
 // GET reqyest for deleting a succulent
-router.get('/succulent/delete', succulent_controller.succulent_delete_get);
+router.get('/succulent/:id/delete', succulent_controller.succulent_delete_get);
 
 // POST request for deleting a succulent
-router.post('/succulent/delete', succulent_controller.succulent_delete_post);
+router.post('/succulent/:id/delete', succulent_controller.succulent_delete_post);
 
 // GET request for updating a succulent
-router.get('/succulent/update', succulent_controller.succulent_update_get);
+router.get('/succulent/:id/update', succulent_controller.succulent_update_get);
 
 // POST request for updating a succulent
-router.post('/succulent/update', succulent_controller.succulent_update_post);
+router.post('/succulent/:id/update', succulent_controller.succulent_update_post);
 
 // GET request for one succulent
 router.get('/succulent/:id', succulent_controller.succulent_detail);
@@ -45,16 +45,16 @@ router.get('/category/create', category_controller.category_create_get);
 router.post('/category/create', category_controller.category_create_post);
 
 // GET reqyest for deleting a category
-router.get('/category/delete', category_controller.category_delete_get);
+router.get('/category/:id/delete', category_controller.category_delete_get);
 
 // POST request for deleting a category
-router.post('/category/delete', category_controller.category_delete_post);
+router.post('/category/:id/delete', category_controller.category_delete_post);
 
 // GET request for updating a category
-router.get('/category/update', category_controller.category_update_get);
+router.get('/category/:id/update', category_controller.category_update_get);
 
 // POST request for updating a category
-router.post('/category/update', category_controller.category_update_post);
+router.post('/category/:id/update', category_controller.category_update_post);
 
 // GET request for one category
 router.get('/category/:id', category_controller.category_detail);
@@ -71,16 +71,16 @@ router.get('/type/create', plant_type_controller.type_create_get);
 router.post('/type/create', plant_type_controller.type_create_post);
 
 // GET reqyest for deleting a category
-router.get('/type/delete', plant_type_controller.type_delete_get);
+router.get('/type/:id/delete', plant_type_controller.type_delete_get);
 
 // POST request for deleting a category
-router.post('/type/delete', plant_type_controller.type_delete_post);
+router.post('/type/:id/delete', plant_type_controller.type_delete_post);
 
 // GET request for updating a category
-router.get('/type/update', plant_type_controller.type_update_get);
+router.get('/type/:id/update', plant_type_controller.type_update_get);
 
 // POST request for updating a category
-router.post('/type/update', plant_type_controller.type_update_post);
+router.post('/type/:id/update', plant_type_controller.type_update_post);
 
 // GET request for one category
 router.get('/type/:id', plant_type_controller.type_detail);
@@ -97,16 +97,16 @@ router.get('/inventory/create', succulent_instance_controller.succulentinstance_
 router.post('/inventory/create', succulent_instance_controller.succulentinstance_create_post);
 
 // GET reqyest for deleting a category
-router.get('/inventory/delete', succulent_instance_controller.succulentinstance_delete_get);
+router.get('/inventory/:id/delete', succulent_instance_controller.succulentinstance_delete_get);
 
 // POST request for deleting a category
-router.post('/inventory/delete', succulent_instance_controller.succulentinstance_delete_post);
+router.post('/inventory/:id/delete', succulent_instance_controller.succulentinstance_delete_post);
 
 // GET request for updating a category
-router.get('/inventory/update', succulent_instance_controller.succulentinstance_update_get);
+router.get('/inventory/:id/update', succulent_instance_controller.succulentinstance_update_get);
 
 // POST request for updating a category
-router.post('/inventory/update', succulent_instance_controller.succulentinstance_update_post);
+router.post('/inventory/:id/update', succulent_instance_controller.succulentinstance_update_post);
 
 // GET request for one category
 router.get('/inventory/:id', succulent_instance_controller.succulentinstance_detail);
