@@ -70,13 +70,56 @@ exports.category_create_post = [
 ];
 
 // display category delete form on GET
-exports.category_delete_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.category_delete_get = (req, res, next) => {
+    
+    async.parallel({
+        category: (callback) => {
+            Category.findById(req.params.id)
+                .exec(callback);
+        },
+        succulents: (callback) => {
+            Succulent.find({ 'category': req.params.id })
+                .exec(callback);
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.category === null ) {
+            res.redirect('/catalog/categories');
+        };
+
+        // successful 
+        res.render('category_delete', { title: 'Delete Category', category: results.category, succulents: results.succulents });
+    }
+    )
 };
 
 // handle category delete on POST
-exports.category_delete_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.category_delete_post = (req, res, next) => {
+    
+    // Assume the POST has valid id
+
+    async.parallel({
+        category: (callback) => {
+            Category.findById(req.body.id)
+                .exec(callback)
+        },
+        succulents: (callback) => {
+            Succulent.find({ 'category': req.body.id })
+                .exec(callback)
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.succulents.length > 0) {
+            // category has linked succulents. Render in same was as GET
+            res.render('category_delete', { title: 'Delete Category', category: results.category, succulents: results.succulents });
+        } else {
+            // Category has no linked succulents. Delete object and redirect
+            Category.findByIdAndRemove(req.body.id, (err) => {
+                if (err) next(err);
+                res.render('/catalog/categories');
+            });
+        }
+    });
 };
 
 // display category update form on GET
