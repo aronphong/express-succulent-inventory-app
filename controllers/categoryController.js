@@ -2,6 +2,8 @@ const Succulent = require('../models/succulent');
 const Category = require('../models/category');
 
 const async = require('async');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 
 // display list of all categorys
 exports.category_list = (req, res, next) => {
@@ -29,9 +31,43 @@ exports.category_create_get = (req, res) => {
 };
 
 // handle succuelent create on POST
-exports.category_create_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.category_create_post = [
+
+    //validate field
+    body('name', 'Category name must not be empty').trim().isLength({ min: 3 }),
+    
+    //sanitize field
+    sanitizeBody('name').escape(),
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        const category = new Category({ name: req.body.name });
+
+        if (!errors.isEmpty()) {
+            res.render('category_form', { title: 'New Category', errors: errors.array() });
+            return;
+        } else {
+            // data from form is valid
+            // check if category already exists
+            Category.findOne({ 'name': req.body.name })
+                .exec((err, found_category) => {
+                    if (err) next(err);
+
+                    if (found_category) {
+                        // category exists, redirect to page
+                        res.redirect(found_category.url);
+                    } else {
+                        category.save((err) => {
+                            if (err) next(err);
+                            res.redirect(category.url);
+                        });
+                    }
+                });
+        }
+    }
+];
 
 // display category delete form on GET
 exports.category_delete_get = (req, res) => {
