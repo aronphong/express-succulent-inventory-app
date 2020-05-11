@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h1= title
+
+  p #[strong Plant Type Name:] #{type.name}
+
+  hr 
+
+  if succulents.length
+    
+    p #[strong Please Delete the following succulents before attempting to delete this Plant Type]
+
+    div(style='margin-left:20px; margin-top:20px;')
+
+      h4 Succulents
+        
+        each succulent in succulents
+          hr
+          p #{succulent.name}
+          p #{succulent.nickname}
+          p #{succulent.sku}
+          p #[string ID: ]
+            a(href=succulent.url) #{succulent.id}
+  else 
+    p Do you really want to delete this Plant Type?
+
+    form(action="" method="POST")
+      div.form-group 
+        input#id.form-control(type="hidden" name="id" required value=type._id)
+      button.btn.btn-primary(type="submit") Delete

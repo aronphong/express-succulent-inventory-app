@@ -1,5 +1,9 @@
 const PlantType = require('../models/planttype');
+const Succulent = require('../models/succulent');
+
 const async = require('async');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 
 // display list of all categorys
 exports.type_list = (req, res, next) => {
@@ -32,13 +36,56 @@ exports.type_create_post = (req, res) => {
 };
 
 // display category delete form on GET
-exports.type_delete_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.type_delete_get = (req, res, next) => {
+    
+    async.parallel({
+        planttype: (callback) => {
+            PlantType.findById(req.params.id)
+                .exec(callback)
+        },
+        succulents: (callback) => {
+            Succulent.find({ 'plantType': req.params.id })
+                .exec(callback)
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.planttype === null) {
+            res.redirect('/catalog/types')
+        };
+
+        // successful
+        res.render('type_delete', { title: 'Delete Plant Type', type: results.planttype, succulents: results.succulents });
+    }
+    )
 };
 
 // handle category delete on POST
 exports.type_delete_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+    
+    // Assume the POST has valid id
+
+    async.parallel({
+        planttype: (callback) => {
+            PlantType.findById(req.params.id)
+                .exec(callback)
+        },
+        succulents: (callback) => {
+            Succulent.find({ 'plantType': req.params.id })
+                .exec(callback)
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.succulents.length > 0 ) {
+            // planttype has linked succulents. Render in same was as GET
+            res.render('type_delete', { title: 'Delete Plant Type', type: results.planttype, succulents: results.succulents });
+        } else {
+            // planttype has no linked succulents. Delete object and redirect
+            PlantType.findByIdAndRemove(req.body.id, (err) => {
+                if (err) next(err);
+                res.redirect('/catalog/types');
+            });
+        }
+    });
 };
 
 // display category update form on GET
