@@ -31,9 +31,42 @@ exports.type_create_get = (req, res) => {
 };
 
 // handle succuelent create on POST
-exports.type_create_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.type_create_post = [
+
+    // validate field
+    body('name', 'Plant Type name must not be empty').trim().isLength({ min: 3}),
+
+    // sanitize field
+    sanitizeBody('name').escape(),
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        const plantType = new PlantType({ name: req.body.name });
+
+        if (!errors.isEmpty()) {
+            res.render('type_form', { title: 'Create new Plant Type', errors: errors.array() });
+            return;
+        } else {
+            //data from form is valid
+            // check if plant type already exists
+            PlantType.findOne({ 'name': req.body.name })
+                .exec((err, found_planttype) => {
+                    if (err) next(err);
+                    if (found_planttype) {
+                        // plant type exists, redirect
+                        res.redirect(found_planttype.url);
+                    } else {
+                        plantType.save((err) => {
+                            if (err) next(err);
+                            res.redirect(plantType.url);
+                        });
+                    }
+                });
+        }
+    }
+];
 
 // display category delete form on GET
 exports.type_delete_get = (req, res, next) => {
