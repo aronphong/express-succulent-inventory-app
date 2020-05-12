@@ -2,6 +2,8 @@ const SucculentInstance = require('../models/succulentinstance');
 const Succulent = require('../models/succulent');
 
 const async = require('async');
+const { body, validationResult } = require('express-validator/check');
+const { sanitizeBody } = require('express-validator/filter');
 
 // display list of all categorys
 exports.succulentinstance_list = (req, res, next) => {
@@ -43,9 +45,42 @@ exports.succulentinstance_create_get = (req, res, next) => {
 };
 
 // handle succuelent create on POST
-exports.succulentinstance_create_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.succulentinstance_create_post = [
+
+    // validate fields
+    body('price', 'Item must be a number').trim().isInt(),
+
+    // sanitize field
+    sanitizeBody('price').escape(),
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        const item = new SucculentInstance({
+            succulent: req.body.name,
+            status: req.body.status,
+            price: req.body.price
+        });
+
+        if (!errors.isEmpty()) {
+            Succulent.find({}, 'name')
+                .exec((err, succulents) => {
+                    if (err) next(err);
+                    res.render('inventory_form', { title: 'Create new Inventory Item', succulents: succulents, selected_succulent: item.succulent._id , errors: errors.array() ,item: item});
+                })
+            return;
+        } else {
+            // data from form is valid
+            item.save((err) => {
+                if (err) next(err);
+
+                // success, redirect to new item
+                res.redirect(item.url);
+            });
+        }
+    }
+];
 
 // display category delete form on GET
 exports.succulentinstance_delete_get = (req, res) => {

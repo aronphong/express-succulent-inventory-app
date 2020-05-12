@@ -5,17 +5,19 @@ block content
 
   form(action="" method="POST")
     div.form-group 
-      label(for="succulent-name") Succulent Name:
-      select#succulent-name.form-control(type="select" placeholder="Select Succulent" name="succulent-name" required)
+      label(for="name") Succulent Name:
+      select#name.form-control(type="select" placeholder="Select Succulent" name="name" required)
         - succulents.sort((a,b) => { let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0; });
         for succulent in succulents
-          option(value=succulent._id) #{succulent.name}
+          option(value=succulent._id, selected=(selected_succulent==succulent._id.toString() ? 'selected':false)) #{succulent.name}
+
     div.form-group
       label(for="status") Status:
       select#status.form-control(type="select" placeholder="Set Status" name="status" required)
-        option(value="Available") Available
-        option(value="Reserved") Reserved
-        option(value="Out of Stock") Out of Stock
+        option(value="Available" selected=(item===undefined || item.status!='Available' ? false:'selected')) Available
+        option(value="Reserved" selected=(item===undefined || item.status!='Reserved' ? false:'selected')) Reserved
+        option(value="Out of Stock" selected=(item===undefined || item.status!='Out of Stock' ? false:'selected')) Out of Stock
+
     div.form-group
       label(for="price") Price:
       input#price.form-control(type="text" placeholder="Set Item Price" name="price" required)
