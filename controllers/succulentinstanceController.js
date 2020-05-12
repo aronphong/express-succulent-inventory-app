@@ -83,13 +83,24 @@ exports.succulentinstance_create_post = [
 ];
 
 // display category delete form on GET
-exports.succulentinstance_delete_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulentinstance_delete_get = (req, res, next) => {
+
+    SucculentInstance.findById(req.params.id)
+        .populate('succulent')
+        .exec((err, item) => {
+            if (err) next(err);
+            res.render('inventory_item_delete', { title: 'Delete Item', item: item});
+        });
 };
 
 // handle category delete on POST
-exports.succulentinstance_delete_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulentinstance_delete_post = (req, res, next) => {
+    
+    SucculentInstance.findByIdAndRemove(req.body.id, (err) => {
+        if (err) next(err); 
+        // success, redirect to inventory page
+        res.redirect('/catalog/inventory');
+    });
 };
 
 // display category update form on GET

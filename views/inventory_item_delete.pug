@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1= title
+
+  #{item.succulent.name}
+
+  p #[strong Name:]
+    a(href=item.succulent.url) #{item.succulent.name}
+  p #[strong Status:] #{item.status}
+
+  p #[strong Price:] #{item.price}
+
+  p Do you really want to delete this item?
+
+    form(action="" method="POST")
+      div.form-group 
+        input#id.form-control(type="hidden" name="id" required value=item._id)
+      button.btn.btn-primary(type="submit") Delete

@@ -11,3 +11,9 @@ block content
   p #[strong Name:] #{item.succulent.name}
   p #[strong Also known as:] #{item.succulent.nickname}
   p #[strong Description]#{item.succulent.summary}
+
+  hr
+  p
+    a(href=item.url + '/update') Update Item Information
+  p 
+    a(href=item.url + '/delete') Delete Item
