@@ -196,11 +196,102 @@ exports.succulent_delete_post = (req, res, next) => {
 };
 
 // display succulent update form on GET
-exports.succulent_update_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulent_update_get = (req, res, next) => {
+    
+   async.parallel({
+       succulent: (callback) => {
+           Succulent.findById(req.params.id).populate('category').populate('plantType').exec(callback);
+       },
+       category: (callback) => {
+           Category.find(callback);
+       },
+       plantType: (callback) => {
+           PlantType.find(callback);
+       }
+   }, (err, results) => {
+       if (err) next(err);
+       if (results.succulent===null) {
+           const err = new Error('Succulent not Found')
+           err.status = 404;
+           return next(err);
+       }
+
+       // mark selected plant types as checked
+       for (let i = 0; i < results.plantType.length; i++) {
+           for (let j = 0; j < results.succulent.plantType.length; j++) {
+               // compare model plant type ID to item plant type ID
+               if (results.plantType[i]._id.toString() === results.succulent.plantType[j]._id.toString()) {
+                   results.plantType[i].checked='true'
+               }
+           }
+       }
+       res.render('succulent_form', { title: 'Update Succulent', succulent: results.succulent, categories: results.category, types: results.plantType });
+   });
 };
 
 // handle succuelent update on POST
-exports.succulent_update_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.succulent_update_post = [
+
+    // validate fields
+    body('name', 'Succulent name must not be empty').trim().isLength({ min: 3}),
+    body('nickname').trim().isLength({ min: 0 }),
+    body('summary', 'Succulent summary must not be empty').trim().isLength({ min: 3 }),
+
+    // sanitize fields
+    sanitizeBody('name').escape(),
+    sanitizeBody('nickname'),
+    sanitizeBody('planttype.*').escape(),
+    sanitizeBody('nickname').escape(),
+    sanitizeBody('summary').escape(),
+
+    (req, res, next) => {
+
+        // extract errors from request
+        const errors = validationResult(req);
+
+        //create new succulent object
+        const succulent = new Succulent({
+            name: req.body.name,
+            nickname: req.body.nickname,
+            summary: req.body.summary,
+            sku: req.body.sku,
+            plantType: (typeof req.body.planttype === 'undefined') ? [] : req.body.planttype,
+            category: req.body.category,
+            _id: req.params.id // reqiuired or new id will be assigned
+        });
+
+        if (!errors.isEmpty()) {
+            // there are errors. render form again with sanitized values / error messages
+
+            async.parallel({
+                types: (callback) => {
+                    PlantType.find(callback)
+                },
+                categories: (callback) => {
+                    Category.find(callback)
+                }
+            }, (err, results) => {
+                if (err) next(err);
+
+                // mark selected genres as checked
+                for (let i = 0; i < results.types.length; i++) {
+                    if (succulent.plantType.indexOf(results.types[i]._id) > -1) {
+                        results.types[i].checked = 'true';
+                    }
+                };
+
+                res.render('succulent_form', { title: 'Update Succulent', succulent: succulent,types: results.types, categories: results.categories, errors: errors.array() });
+            });
+            return;
+        } else {
+            // data from form is valid. update record
+
+            Succulent.findByIdAndUpdate(req.params.id, succulent, {}, (err, thesucculent) => {
+                if (err) next(err);
+                // success
+                res.redirect(thesucculent.url);
+            })
+
+        }
+    }
+]
