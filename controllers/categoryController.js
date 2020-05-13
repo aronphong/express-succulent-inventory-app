@@ -124,10 +124,47 @@ exports.category_delete_post = (req, res, next) => {
 
 // display category update form on GET
 exports.category_update_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+
+    Category.findById(req.params.id)
+        .exec((err, category) => {
+            if (err) next(err);
+            res.render('category_form', { title: 'Update Category', category: category });
+        });
 };
 
 // handle succuelent update on POST
-exports.category_update_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.category_update_post = [
+
+    // validate field
+    body('name', 'Category name must not be empty').trim().isLength({ min: 1 }),
+
+    // sanitize field
+    sanitizeBody('name').escape(),
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        // create category with escaped/trimmed data and old id
+        const category = new Category({ 
+            name: req.body.name,
+            _id: req.params.id
+        });
+
+        if (!errors.isEmpty()) {
+            // there are errors. render form again with sanitized value / error message
+            Category.findById(req.params.id)
+                .exec((err, category) => {
+                    if (err) next(err);
+                    res.render('category_form', { title: 'Update Category', category: category})
+                })
+        } else {
+            // data from form is valid. save and redirect
+            Category.findByIdAndUpdate(req.params.id, category, {}, (err, thecategory) => {
+                if (err) next(err);
+                res.redirect(thecategory.url);
+            })
+        }
+    }
+
+];

@@ -5,7 +5,7 @@ block content
 
   form(action="" method="POST")
     div.form-group 
-      label(for="name") New Category:
+      label(for="name") #{title}:
       input#name.form-control(type="text", placeholder="New Category Name" name="name" value=(category === undefined ? '' : category.name) required )
 
     button.btn.btn-primary(type="submit") Submit
