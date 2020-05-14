@@ -123,7 +123,7 @@ exports.category_delete_post = (req, res, next) => {
 };
 
 // display category update form on GET
-exports.category_update_get = (req, res) => {
+exports.category_update_get = (req, res, next) => {
 
     Category.findById(req.params.id)
         .exec((err, category) => {
