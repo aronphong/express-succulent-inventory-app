@@ -21,7 +21,7 @@ exports.type_detail = (req, res, next) => {
     PlantType.findById(req.params.id)
         .exec( (err, plant_detail) => {
             if (err) next(err);
-            res.render('type_detail', { title: 'Plant Type Detail', detail: plant_detail });
+            res.render('type_detail', { title: 'Plant Type Detail', type: plant_detail });
         });
 };
 
@@ -122,11 +122,46 @@ exports.type_delete_post = (req, res) => {
 };
 
 // display category update form on GET
-exports.type_update_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.type_update_get = (req, res, next) => {
+    
+    PlantType.findById(req.params.id)
+        .exec((err, plantType) => {
+            if (err) next(err);
+            res.render('type_form', { title: 'Update Plant Type', type: plantType });
+        })
 };
 
 // handle succuelent update on POST
-exports.type_update_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.type_update_post = [
+
+    // validate field
+    body('name', 'Plant Type name must not be empty').trim().isLength({ min: 1 }),
+
+    // sanitize field
+    sanitizeBody('name').escape(),
+
+    (req, res, next) => {
+        
+        const errors = validationResult(req);
+
+        const plantType = new PlantType({
+            name: req.body.name,
+            _id: req.params.id
+        });
+
+        if (!errors.isEmpty()) {
+            // there are errors. render form again with sanitized value/error message
+            PlantType.findById(req.params.id)
+                .exec((err, plantType) => {
+                    if (err) next(err);
+                    res.render('type_form', { title: 'Update Plant Type', type: plantType, errors: errors.array() });
+                });
+        } else {
+            // data from form is valid, save and redirect
+            PlantType.findByIdAndUpdate(req.params.id, plantType, {}, (err, thetype) => {
+                if (err) next(err);
+                res.redirect(thetype.url);
+            });
+        }
+    }
+];

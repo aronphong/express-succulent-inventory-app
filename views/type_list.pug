@@ -4,6 +4,7 @@ block content
   h1= title
 
   ul
+    - type_list.sort((a, b) => {let nameA=a.name.toUpperCase(); let nameB=b.name.toUpperCase(); return ((nameA < nameB) ? -1  : (nameA > nameB) ? 1 : 0)})
     each val in type_list
       li
         a(href=val.url) #{val.name}
