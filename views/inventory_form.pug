@@ -20,7 +20,7 @@ block content
 
     div.form-group
       label(for="price") Price:
-      input#price.form-control(type="text" placeholder="Set Item Price" name="price" required)
+      input#price.form-control(type="text" placeholder="Set Item Price" name="price" required value=(item===undefined ? '' : item.price))
     button.btn-btn-primary(type="submit") Submit
 
   if errors

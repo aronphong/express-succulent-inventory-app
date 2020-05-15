@@ -104,11 +104,58 @@ exports.succulentinstance_delete_post = (req, res, next) => {
 };
 
 // display category update form on GET
-exports.succulentinstance_update_get = (req, res) => {
-    res.send('NOT IMPLEMENTED');
+exports.succulentinstance_update_get = (req, res, next) => {
+    
+    async.parallel({
+        item: (callback) => {
+            SucculentInstance.findById(req.params.id).exec(callback);
+        },
+        succulents: (callback) => {
+            Succulent.find(callback);
+        }
+    }, (err, results) => {
+        if (err) next(err);
+        if (results.succulentinstance===null) {
+            const err = new Error('Succulent not Found');
+            err.status = 404;
+            return next(err);
+        }
+        // success
+        res.render('inventory_form', { title: 'Update Item Information', item: results.item, succulents: results.succulents });
+    });
 };
 
 // handle succuelent update on POST
-exports.succulentinstance_update_post = (req, res) => {
-    res.send('NOT IMPLEMENTED');
-};
+exports.succulentinstance_update_post = [
+
+    body('price', 'Item Price must be numeric').trim().isNumeric(),
+
+    sanitizeBody('price').escape(),
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        const item = new SucculentInstance({
+            succulent: req.body.succulent,
+            status: req.body.status,
+            price: req.body.price,
+            _id: req.params.id
+        });
+
+        if (!errors.isEmpty()) {
+
+            Succulent.find({}, 'name')
+                .exec((err, succulents) => {
+                    if (err) next(err);
+                    res.render('inventory_form', { title: 'Update Item Information', item: item, succulents: succulents, errors: errors.array() });
+                });
+        } else {
+
+            SucculentInstance.findByIdAndUpdate(req.params.id, item, {}, (err, theitem) => {
+                if (err) next(err);
+                res.redirect(theitem.url);
+            });
+        }
+    }
+];
