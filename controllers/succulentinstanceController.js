@@ -2,6 +2,10 @@ const SucculentInstance = require('../models/succulentinstance');
 const Succulent = require('../models/succulent');
 
 const async = require('async');
+const fs = require('fs');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
 const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
@@ -29,7 +33,14 @@ exports.succulentinstance_detail = (req, res, next) => {
                 return next(err);
             }
 
-            res.render('inventory_item_detail', { title: 'Item Detail', item: instance_detail });
+            let img = null;
+            if (instance_detail.image !== undefined) {
+
+                // if image exists in instace, encode buffer data to base64
+                img = `data:${instance_detail.image.contentType};base64, ${instance_detail.image.data.toString('base64')}`
+            }   
+            
+            res.render('inventory_item_detail', { title: 'Item Detail', item: instance_detail, image: img });
         })
 };
 
@@ -47,6 +58,9 @@ exports.succulentinstance_create_get = (req, res, next) => {
 // handle succuelent create on POST
 exports.succulentinstance_create_post = [
 
+    // upload image to ./uploads/
+    upload.single('itemimage'),
+
     // validate fields
     body('price', 'Item must be a number').trim().isInt(),
 
@@ -60,8 +74,17 @@ exports.succulentinstance_create_post = [
         const item = new SucculentInstance({
             succulent: req.body.name,
             status: req.body.status,
-            price: req.body.price
+            price: req.body.price,
+            // image: fs.readFileSync(req.file.path),
         });
+
+        if (req.file) {
+            
+            // if file uploaded, encode image data
+            item.image.data = fs.readFileSync(req.file.path);
+            item.image.contentType = req.file.mimetype;
+        }
+
 
         if (!errors.isEmpty()) {
             Succulent.find({}, 'name')

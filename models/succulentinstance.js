@@ -6,7 +6,8 @@ const SucculentInstanceSchema = new Schema(
     {
         succulent: {type: Schema.Types.ObjectId, ref: 'Succulent', required: true},
         status: {type: String, required: true, enum: ['Available', 'Reserved', 'Out of Stock'], default: 'Out of Stock'},
-        price: {type: Number, default: 0.00}
+        price: {type: Number, default: 0.00},
+        image: {data: Buffer, contentType: String} 
     }
 );
 

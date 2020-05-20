@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 ID: #{item._id}
+  h1 ID: #{item.id}
 
   h4= item.price
   h4= item.status
@@ -10,7 +10,9 @@ block content
   br
   p #[strong Name:] #{item.succulent.name}
   p #[strong Also known as:] #{item.succulent.nickname}
-  p #[strong Description]#{item.succulent.summary}
+  p #[strong Description: ]#{item.succulent.summary}
+  if image
+    img(src=image, alt="")
 
   hr
   p

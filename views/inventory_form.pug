@@ -3,7 +3,7 @@ extends layout
 block content
   h1= title
 
-  form(action="" method="POST")
+  form(action="" method="POST" enctype="multipart/form-data")
     div.form-group 
       label(for="name") Succulent Name:
       select#name.form-control(type="select" placeholder="Select Succulent" name="name" required)
@@ -21,6 +21,12 @@ block content
     div.form-group
       label(for="price") Price:
       input#price.form-control(type="text" placeholder="Set Item Price" name="price" required value=(item===undefined ? '' : item.price))
+    
+
+    div.form-group 
+      label(for="itemimage") Upload Image:
+      input#itemimage.form-control-file(type="file" name="itemimage")
+
     button.btn-btn-primary(type="submit") Submit
 
   if errors
