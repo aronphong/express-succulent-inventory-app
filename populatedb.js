@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-console.log('This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0-mbdj7.mongodb.net/local_library?retryWrites=true');
+console.log('This script populates some succulents, types, categories and instances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0-mbdj7.mongodb.net/local_library?retryWrites=true');
 
 // Get arguments passed on command line
 const userArgs = process.argv.slice(2);
@@ -84,13 +84,16 @@ function succulentCreate(name, nickname, summary, sku, category, plantType, cb) 
 }
 
 
-function succulentInstanceCreate(succulent, status, price, cb) {
+function succulentInstanceCreate(succulent, status, price, image ,cb) {
   succulentinstancedetail = { 
-    // succulent: succulent,    
+    succulent: succulent,
+    price: price,
   }
-  if (succulent != false) succulentinstancedetail.succulent = succulent;    
-  if (price != false) succulentinstancedetail.price = price;
+
+  // if (succulent != false) succulentinstancedetail.succulent = succulent;    
+  // if (price != false) succulentinstancedetail.price = price;
   if (status != false) succulentinstancedetail.status = status;
+  if (image != false) succulentinstancedetail.image = image;
     
   const succulentinstance = new SucculentInstance(succulentinstancedetail);    
   succulentinstance.save(function (err) {
@@ -144,19 +147,19 @@ function createCategoryTypes(cb) {
 function createSucculents(cb) {
     async.parallel([
         function(callback) {
-          succulentCreate('Senecio rowleyanus', 'String of Pearls', ': An all-time favorite for the way its bead-like leaves can cascade several feet.', 'SS1011' , categories[4], [plantTypes[1], plantTypes[3]], callback);
+          succulentCreate('Senecio rowleyanus', 'String of Pearls', 'An all-time favorite for the way its bead-like leaves can cascade several feet.', 'SS1011' , categories[4], [plantTypes[1], plantTypes[3]], callback);
         },
         function(callback) {
-          succulentCreate('Haworthia fasciata', 'Zebra Plant', ': Named for the distinctive white bumps that line the outside of its leaves.', 'SS3027' , categories[0], [plantTypes[0], plantTypes[3]], callback);
+          succulentCreate('Haworthia fasciata', 'Zebra Plant', 'Named for the distinctive white bumps that line the outside of its leaves.', 'SS3027' , categories[0], [plantTypes[0], plantTypes[3]], callback);
         },
         function(callback) {
-          succulentCreate('Echeveria', 'Perle von Nurnberg', ': An old, classic hybrid that is well-loved for its pearlescent pink and purple tones that can shade to blue-green.', 'SS8062' , categories[0], [plantTypes[1], plantTypes[3]], callback);
+          succulentCreate('Echeveria', 'Perle von Nurnberg', 'An old, classic hybrid that is well-loved for its pearlescent pink and purple tones that can shade to blue-green.', 'SS8062' , categories[0], [plantTypes[1], plantTypes[3]], callback);
         },
         function(callback) {
-          succulentCreate('Fenestraria rhopalophylla', 'Baby Toes', ':  Green, finger-like foliage grows in upright clusters.', 'SS5786' , categories[3], [plantTypes[1], plantTypes[2]], callback);
+          succulentCreate('Fenestraria rhopalophylla', 'Baby Toes', 'Green, finger-like foliage grows in upright clusters.', 'SS5786' , categories[3], [plantTypes[1], plantTypes[2]], callback);
         },
         function(callback) {
-          succulentCreate('Haworthia mutica', null, ': Striped, chunky green leaves form a loose rosette. Each leaf has a flat top with a translucent "leaf window" that lets sunlight into the leaf interior. With brighter light it can take on a copper or purple coloration.', 'SS1011' , categories[0], [plantTypes[1], plantTypes[2] ,plantTypes[3]], callback);
+          succulentCreate('Haworthia mutica', null, 'Striped, chunky green leaves form a loose rosette. Each leaf has a flat top with a translucent "leaf window" that lets sunlight into the leaf interior. With brighter light it can take on a copper or purple coloration.', 'SS1011' , categories[0], [plantTypes[1], plantTypes[2] ,plantTypes[3]], callback);
         },
         ],
         // optional callback
@@ -167,37 +170,37 @@ function createSucculents(cb) {
 function createSucculentInstances(cb) {
     async.parallel([
         function(callback) {
-          succulentInstanceCreate(succulents[0], 'Available', 5.99, callback)
+          succulentInstanceCreate(succulents[0], 'Available', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[1], 'Available', 5.99, callback)
+          succulentInstanceCreate(succulents[1], 'Available', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[2], 'Out of Stock', 5.99, callback)
+          succulentInstanceCreate(succulents[2], 'Out of Stock', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[3], 'Available', 5.99, callback)
+          succulentInstanceCreate(succulents[3], 'Available', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[3], 'Reserved', 5.99, callback)
+          succulentInstanceCreate(succulents[3], 'Reserved', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[3], 'Available', 5.99, callback)
+          succulentInstanceCreate(succulents[3], 'Available', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[4], 'Reserved', 5.99, callback)
+          succulentInstanceCreate(succulents[4], 'Reserved', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[4], 'Reserved', 5.99, callback)
+          succulentInstanceCreate(succulents[4], 'Reserved', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[4], 'Available', 5.99, callback)
+          succulentInstanceCreate(succulents[4], 'Available', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[0], 'Reserved', 5.99, callback)
+          succulentInstanceCreate(succulents[0], 'Reserved', 5.99, null, callback)
         },
         function(callback) {
-          succulentInstanceCreate(succulents[1], 'Available', 5.99, callback)
+          succulentInstanceCreate(succulents[1], 'Available', 5.99, null, callback)
         }
         ],
         // Optional callback
