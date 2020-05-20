@@ -34,7 +34,7 @@ exports.succulentinstance_detail = (req, res, next) => {
             }
 
             let img = null;
-            if (instance_detail.image !== undefined) {
+            if (instance_detail.image.data) {
 
                 // if image exists in instace, encode buffer data to base64
                 img = `data:${instance_detail.image.contentType};base64, ${instance_detail.image.data.toString('base64')}`
